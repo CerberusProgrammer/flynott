@@ -50,11 +50,14 @@ class CustomAppbar extends StatelessWidget {
                   elevation: 0,
                   color: const Color(0xFFD9D9D9).withOpacity(0.5),
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () {
+                      // TODO: search
+                    },
                     borderRadius: BorderRadius.circular(10),
                     child: Icon(
                       icon,
                       size: 24,
+                      color: Colors.black.withOpacity(.5),
                     ),
                   ),
                 ),

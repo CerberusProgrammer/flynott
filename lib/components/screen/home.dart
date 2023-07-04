@@ -1,22 +1,34 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
+import 'package:flynott/components/components.dart';
+import 'package:flynott/components/providers/home_provider.dart';
+import 'package:flynott/components/providers/time_provider.dart';
 import 'package:flynott/components/widgets/shared/custom_appbar.dart';
+import 'package:flynott/infrastructure/models/category_note.dart';
+import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class Home extends StatelessWidget {
+import '../providers/categories_notes_provider.dart';
+
+class Home extends ConsumerWidget {
   const Home({super.key});
 
   static const appRouterName = 'home';
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    String greetings = ref.watch(greetingProvider);
+    String time = ref.watch(actualTime);
+    List<CategoryNote> notes = ref.watch(categoriesNotes);
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
-            const CustomAppbar(
-              title: 'Greatings Title',
-              date: '20 May 2023',
+            CustomAppbar(
+              title: greetings,
+              date: time,
               icon: Icons.settings,
             ),
             Padding(
@@ -25,20 +37,12 @@ class Home extends StatelessWidget {
                 crossAxisSpacing: 5,
                 mainAxisSpacing: 5,
                 crossAxisCount: 2,
-                children: const [
-                  CardCategoryNote(
-                    date: '20 May 2023',
-                    quantityNote: '04',
-                    titleNote: 'Material Design',
-                    color: Color(0xFFFFF377),
+                children: List.generate(
+                  notes.length,
+                  (index) => _CardCategoryNote(
+                    categoryNote: notes[index],
                   ),
-                  CardCategoryNote(
-                    date: '10 Apr 2023',
-                    quantityNote: '14',
-                    titleNote: 'Flutter Material Design version for more style',
-                    color: Color(0xFF81FFA7),
-                  ),
-                ],
+                ),
               ),
             )
           ],
@@ -58,29 +62,25 @@ class Home extends StatelessWidget {
   }
 }
 
-class CardCategoryNote extends StatelessWidget {
-  final String quantityNote;
-  final String titleNote;
-  final String date;
-  final Color color;
+class _CardCategoryNote extends ConsumerWidget {
+  final CategoryNote categoryNote;
 
-  const CardCategoryNote({
-    super.key,
-    required this.quantityNote,
-    required this.titleNote,
-    required this.date,
-    required this.color,
+  const _CardCategoryNote({
+    required this.categoryNote,
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return SizedBox(
       width: 200,
       child: Card(
         elevation: 0,
-        color: color,
+        color: categoryNote.color,
         child: InkWell(
-          onTap: () {},
+          onTap: () {
+            ref.read(selectedCategory.notifier).state = categoryNote;
+            context.pushNamed(CategoryNotesScreen.appRouterName);
+          },
           borderRadius: BorderRadius.circular(10),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -88,7 +88,9 @@ class CardCategoryNote extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(13, 15, 0, 0),
                 child: Text(
-                  quantityNote,
+                  categoryNote.quantityNotes < 10
+                      ? '0${categoryNote.quantityNotes}'
+                      : categoryNote.quantityNotes.toString(),
                   style: GoogleFonts.josefinSans(
                     fontSize: 56,
                     fontWeight: FontWeight.bold,
@@ -99,7 +101,7 @@ class CardCategoryNote extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(13, 33, 13, 0),
                 child: Text(
-                  titleNote,
+                  categoryNote.title,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -110,7 +112,7 @@ class CardCategoryNote extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.fromLTRB(13, 2, 13, 15),
                 child: Text(
-                  date,
+                  categoryNote.date,
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,

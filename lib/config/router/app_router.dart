@@ -1,4 +1,5 @@
 import 'package:flynott/components/components.dart';
+import 'package:flynott/components/screen/notes/create_note_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final appRouter = GoRouter(
@@ -18,6 +19,11 @@ final appRouter = GoRouter(
           path: DisplayNoteScreen.appRouterName,
           name: DisplayNoteScreen.appRouterName,
           builder: (context, state) => const DisplayNoteScreen(),
+        ),
+        GoRoute(
+          path: CreateNoteScreen.appRouterName,
+          name: CreateNoteScreen.appRouterName,
+          builder: (context, state) => const CreateNoteScreen(),
         ),
       ],
     ),

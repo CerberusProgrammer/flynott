@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flynott/components/components.dart';
+import 'package:flynott/components/screen/notes/create_note_screen.dart';
 import 'package:flynott/infrastructure/models/category_note.dart';
 import 'package:flynott/infrastructure/models/note.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+
+import '../../providers/notes_provider.dart';
 
 class CategoryNotesScreen extends StatelessWidget {
   const CategoryNotesScreen({super.key});
@@ -12,6 +16,10 @@ class CategoryNotesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final indexCategory = context.watch<NotesProvider>().indexCategory;
+    final notes = context.watch<NotesProvider>().categories;
+    final categoryNote = notes[indexCategory];
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -62,8 +70,7 @@ class CategoryNotesScreen extends StatelessWidget {
         backgroundColor: const Color(0xFFD9D9D9),
         splashColor: const Color.fromARGB(146, 255, 255, 255),
         onPressed: () {
-          ref.read(indexNote.notifier).state = null;
-          context.pushNamed(DisplayNoteScreen.appRouterName);
+          context.pushNamed(CreateNoteScreen.appRouterName);
         },
         child: const Icon(
           Icons.add,
@@ -157,7 +164,7 @@ class _MyCustomAppBar extends StatelessWidget {
   }
 }
 
-class _CardNote extends ConsumerWidget {
+class _CardNote extends StatelessWidget {
   final CategoryNote category;
   final Note note;
   final int index;
@@ -169,7 +176,7 @@ class _CardNote extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return SizedBox(
       width: 200,
       child: Card(
@@ -177,7 +184,7 @@ class _CardNote extends ConsumerWidget {
         color: category.color,
         child: InkWell(
           onTap: () {
-            ref.read(indexNote.notifier).state = index;
+            context.read<NotesProvider>().indexNote = index;
             context.pushNamed(DisplayNoteScreen.appRouterName);
           },
           borderRadius: BorderRadius.circular(10),

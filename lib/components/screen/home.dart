@@ -1,10 +1,13 @@
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flynott/components/components.dart';
+import 'package:flynott/components/providers/notes_provider.dart';
+import 'package:flynott/components/providers/times_provider.dart';
 import 'package:flynott/components/widgets/shared/custom_appbar.dart';
 import 'package:flynott/infrastructure/models/category_note.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -13,13 +16,15 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final notes = context.watch<NotesProvider>().categories;
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
           children: [
             CustomAppbar(
-              title: greetings,
-              date: time,
+              title: context.watch<TimesProvider>().getGreetings(),
+              date: context.watch<TimesProvider>().actualTime,
               icon: Icons.settings,
             ),
             Padding(
@@ -54,7 +59,7 @@ class Home extends StatelessWidget {
   }
 }
 
-class _CardCategoryNote extends ConsumerWidget {
+class _CardCategoryNote extends StatelessWidget {
   final CategoryNote categoryNote;
   final int index;
 
@@ -64,7 +69,7 @@ class _CardCategoryNote extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return SizedBox(
       width: 200,
       child: Card(
@@ -72,7 +77,7 @@ class _CardCategoryNote extends ConsumerWidget {
         color: categoryNote.color,
         child: InkWell(
           onTap: () {
-            ref.read(indexCategory.notifier).state = index;
+            context.read<NotesProvider>().indexCategory = index;
             context.pushNamed(CategoryNotesScreen.appRouterName);
           },
           borderRadius: BorderRadius.circular(10),

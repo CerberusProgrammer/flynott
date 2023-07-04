@@ -5,18 +5,16 @@ import 'package:provider/provider.dart';
 
 import '../../providers/notes_provider.dart';
 
-class DisplayNoteScreen extends StatelessWidget {
-  const DisplayNoteScreen({super.key});
+TextEditingController _titleEditingController = TextEditingController();
+TextEditingController _contetsEditingController = TextEditingController();
 
-  static const String appRouterName = "display-note-screen";
+class CreateNoteScreen extends StatelessWidget {
+  const CreateNoteScreen({super.key});
+
+  static const String appRouterName = "create-note-screen";
 
   @override
   Widget build(BuildContext context) {
-    final indexCategory = context.watch<NotesProvider>().indexCategory;
-    final indexNote = context.watch<NotesProvider>().indexNote;
-    final notes = context.watch<NotesProvider>().categories;
-    final categoryNote = notes[indexCategory];
-    final note = categoryNote.notes[indexNote];
     final actualDate = context.watch<TimesProvider>().actualTime;
 
     return Scaffold(
@@ -38,14 +36,7 @@ class DisplayNoteScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
-                      controller: TextEditingController(text: note.title),
-                      onChanged: (value) {
-                        context.read<NotesProvider>().updateNoteTitle(
-                              indexCategory,
-                              indexNote,
-                              value,
-                            );
-                      },
+                      controller: _titleEditingController,
                       cursorColor: Colors.grey,
                       maxLines: null,
                       decoration: InputDecoration(
@@ -59,7 +50,7 @@ class DisplayNoteScreen extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      note.date == '' ? note.date : actualDate,
+                      actualDate,
                       style: TextStyle(
                         fontSize: 16,
                         color: Colors.black.withOpacity(.5),
@@ -68,14 +59,7 @@ class DisplayNoteScreen extends StatelessWidget {
                     ),
                     const SizedBox(height: 20),
                     TextField(
-                      onChanged: (value) {
-                        context.read<NotesProvider>().updateNoteContet(
-                              indexCategory,
-                              indexNote,
-                              value,
-                            );
-                      },
-                      controller: TextEditingController(text: note.content),
+                      controller: _contetsEditingController,
                       maxLines: null,
                       cursorColor: Colors.grey,
                       decoration: InputDecoration(
@@ -122,7 +106,19 @@ class _MyCustomAppBar extends StatelessWidget {
                     color: const Color(0xFFD9D9D9).withOpacity(0.5),
                     child: InkWell(
                       onTap: () {
-                        context.read<NotesProvider>().updateInBack();
+                        final actualDate =
+                            context.read<TimesProvider>().actualTime;
+
+                        context.read<NotesProvider>().addNewNote(
+                              context.read<NotesProvider>().indexCategory,
+                              _titleEditingController.text,
+                              actualDate,
+                              _contetsEditingController.text,
+                            );
+
+                        _titleEditingController.clear();
+                        _contetsEditingController.clear();
+
                         context.pop();
                       },
                       borderRadius: BorderRadius.circular(10),

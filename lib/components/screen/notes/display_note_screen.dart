@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flynott/components/providers/categories_notes_provider.dart';
-import 'package:flynott/components/providers/time_provider.dart';
 import 'package:go_router/go_router.dart';
 
-class DisplayNoteScreen extends ConsumerWidget {
+class DisplayNoteScreen extends StatelessWidget {
   const DisplayNoteScreen({super.key});
 
   static const String appRouterName = "display-note-screen";
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final note = ref.read(selectedNote.notifier).state;
-
+  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Theme(
@@ -32,7 +27,10 @@ class DisplayNoteScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     TextField(
-                      controller: TextEditingController(text: note?.title),
+                      controller: TextEditingController(text: note.title),
+                      onChanged: (value) {
+                        editNote(ref, indCat, indNot, note);
+                      },
                       cursorColor: Colors.grey,
                       maxLines: null,
                       decoration: InputDecoration(
@@ -46,6 +44,7 @@ class DisplayNoteScreen extends ConsumerWidget {
                       ),
                     ),
                     Text(
+                      // ignore: unnecessary_null_comparison
                       note != null ? note.date : ref.watch(actualTime),
                       style: TextStyle(
                         fontSize: 16,

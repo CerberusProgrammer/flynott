@@ -1,21 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flynott/components/components.dart';
-import 'package:flynott/components/providers/categories_notes_provider.dart';
 import 'package:flynott/infrastructure/models/category_note.dart';
 import 'package:flynott/infrastructure/models/note.dart';
 import 'package:go_router/go_router.dart';
 
-class CategoryNotesScreen extends ConsumerWidget {
+class CategoryNotesScreen extends StatelessWidget {
   const CategoryNotesScreen({super.key});
 
   static const String appRouterName = 'category-notes-screen';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final categoryNote = ref.watch(selectedCategory);
-
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -26,7 +22,7 @@ class CategoryNotesScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  categoryNote!.title,
+                  categoryNote.title,
                   style: const TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
@@ -54,6 +50,7 @@ class CategoryNotesScreen extends ConsumerWidget {
                 (index) => _CardNote(
                   note: categoryNote.notes[index],
                   category: categoryNote,
+                  index: index,
                 ),
               ),
             ),
@@ -65,7 +62,7 @@ class CategoryNotesScreen extends ConsumerWidget {
         backgroundColor: const Color(0xFFD9D9D9),
         splashColor: const Color.fromARGB(146, 255, 255, 255),
         onPressed: () {
-          ref.read(selectedNote.notifier).state = null;
+          ref.read(indexNote.notifier).state = null;
           context.pushNamed(DisplayNoteScreen.appRouterName);
         },
         child: const Icon(
@@ -163,10 +160,12 @@ class _MyCustomAppBar extends StatelessWidget {
 class _CardNote extends ConsumerWidget {
   final CategoryNote category;
   final Note note;
+  final int index;
 
   const _CardNote({
     required this.note,
     required this.category,
+    required this.index,
   });
 
   @override
@@ -178,7 +177,7 @@ class _CardNote extends ConsumerWidget {
         color: category.color,
         child: InkWell(
           onTap: () {
-            ref.read(selectedNote.notifier).state = note;
+            ref.read(indexNote.notifier).state = index;
             context.pushNamed(DisplayNoteScreen.appRouterName);
           },
           borderRadius: BorderRadius.circular(10),

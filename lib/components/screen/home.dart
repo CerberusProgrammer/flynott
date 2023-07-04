@@ -1,27 +1,18 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flynott/components/components.dart';
-import 'package:flynott/components/providers/home_provider.dart';
-import 'package:flynott/components/providers/time_provider.dart';
 import 'package:flynott/components/widgets/shared/custom_appbar.dart';
 import 'package:flynott/infrastructure/models/category_note.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-import '../providers/categories_notes_provider.dart';
-
-class Home extends ConsumerWidget {
+class Home extends StatelessWidget {
   const Home({super.key});
 
   static const appRouterName = 'home';
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    String greetings = ref.watch(greetingProvider);
-    String time = ref.watch(actualTime);
-    List<CategoryNote> notes = ref.watch(categoriesNotes);
-
+  Widget build(BuildContext context) {
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -41,6 +32,7 @@ class Home extends ConsumerWidget {
                   notes.length,
                   (index) => _CardCategoryNote(
                     categoryNote: notes[index],
+                    index: index,
                   ),
                 ),
               ),
@@ -64,9 +56,11 @@ class Home extends ConsumerWidget {
 
 class _CardCategoryNote extends ConsumerWidget {
   final CategoryNote categoryNote;
+  final int index;
 
   const _CardCategoryNote({
     required this.categoryNote,
+    required this.index,
   });
 
   @override
@@ -78,7 +72,7 @@ class _CardCategoryNote extends ConsumerWidget {
         color: categoryNote.color,
         child: InkWell(
           onTap: () {
-            ref.read(selectedCategory.notifier).state = categoryNote;
+            ref.read(indexCategory.notifier).state = index;
             context.pushNamed(CategoryNotesScreen.appRouterName);
           },
           borderRadius: BorderRadius.circular(10),

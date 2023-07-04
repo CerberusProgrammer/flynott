@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 class Home extends StatelessWidget {
   const Home({super.key});
 
+  static const appRouterName = 'home';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

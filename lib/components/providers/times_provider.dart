@@ -5,7 +5,7 @@ class TimesProvider extends ChangeNotifier {
   late String actualTime;
 
   void initTime() {
-    actualTime = DateFormat('dd MMMM yyyy').format(DateTime.now());
+    actualTime = DateFormat('dd MMM yyyy').format(DateTime.now());
   }
 
   String getGreetings() {

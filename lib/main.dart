@@ -27,9 +27,9 @@ class Main extends StatelessWidget {
         ChangeNotifierProvider(
             lazy: false,
             create: (_) {
-              final times = NoteProvider([]);
-              times.load();
-              return times;
+              final notes = NoteProvider([]);
+              notes.load();
+              return notes;
             }),
       ],
       child: MaterialApp.router(

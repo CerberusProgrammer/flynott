@@ -10,18 +10,28 @@ import 'package:provider/provider.dart';
 
 import '../../providers/note_provider.dart';
 
-class CategoryNotesScreen extends StatelessWidget {
+class CategoryNotesScreen extends StatefulWidget {
   const CategoryNotesScreen({super.key});
 
   static const String appRouterName = 'category-notes-screen';
 
   @override
+  State<CategoryNotesScreen> createState() => _CategoryNotesScreenState();
+}
+
+class _CategoryNotesScreenState extends State<CategoryNotesScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Inicializa la lista de notas filtradas
+    Provider.of<NoteProvider>(context, listen: false).searchNotes('');
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Obtiene la categoría seleccionada del NotesProvider
     final categoryNote = context.watch<NoteProvider>().selectedCategory;
 
     if (categoryNote == null) {
-      // Si no hay ninguna categoría seleccionada, muestra un mensaje o un widget vacío
       return const Center(child: Text('No hay ninguna categoría seleccionada'));
     }
 
@@ -59,9 +69,9 @@ class CategoryNotesScreen extends StatelessWidget {
               mainAxisSpacing: 5,
               crossAxisCount: 2,
               children: List.generate(
-                categoryNote.notes.length,
+                context.watch<NoteProvider>().filteredNotes.length,
                 (index) => _CardNote(
-                  note: categoryNote.notes[index],
+                  note: context.watch<NoteProvider>().filteredNotes[index],
                   category: categoryNote,
                   index: index,
                 ),
@@ -95,6 +105,24 @@ class _MyCustomAppBarState extends State<_MyCustomAppBar> {
   bool _showExtraWidgets = false;
   bool _showTextField = false;
   final TextEditingController _textController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _textController.addListener(() {
+      Provider.of<NoteProvider>(context, listen: false)
+          .searchNotes(_textController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    _textController.removeListener(() {
+      Provider.of<NoteProvider>(context, listen: false)
+          .searchNotes(_textController.text);
+    });
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

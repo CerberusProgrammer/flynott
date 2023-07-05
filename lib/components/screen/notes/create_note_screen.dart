@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flynott/components/providers/times_provider.dart';
-import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/notes_provider.dart';
+import '../../../infrastructure/models/note.dart';
+import '../../providers/note_provider.dart';
 
 TextEditingController _titleEditingController = TextEditingController();
 TextEditingController _contetsEditingController = TextEditingController();
@@ -28,7 +28,7 @@ class CreateNoteScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const _MyCustomAppBar(),
+            _MyCustomAppBar(actualDate),
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(30, 11, 30, 21),
@@ -84,7 +84,9 @@ class CreateNoteScreen extends StatelessWidget {
 }
 
 class _MyCustomAppBar extends StatelessWidget {
-  const _MyCustomAppBar();
+  final String actualDate;
+
+  const _MyCustomAppBar(this.actualDate);
 
   @override
   Widget build(BuildContext context) {
@@ -106,20 +108,26 @@ class _MyCustomAppBar extends StatelessWidget {
                     color: const Color(0xFFD9D9D9).withOpacity(0.5),
                     child: InkWell(
                       onTap: () {
-                        final actualDate =
-                            context.read<TimesProvider>().actualTime;
-
-                        context.read<NotesProvider>().addNewNote(
-                              context.read<NotesProvider>().indexCategory,
-                              _titleEditingController.text,
-                              actualDate,
-                              _contetsEditingController.text,
-                            );
-
+                        // Verifica que el título y el contenido no estén vacíos
+                        if (_titleEditingController.text.isNotEmpty ||
+                            _contetsEditingController.text.isNotEmpty) {
+                          // Crea una nueva nota con el título y el contenido especificados por el usuario
+                          final note = Note(
+                              index:
+                                  -1, // El índice no importa porque se va a agregar a la lista de notas de la categoría seleccionada
+                              title: _titleEditingController.text,
+                              date: actualDate,
+                              content: _contetsEditingController.text);
+                          // Agrega la nota a la categoría seleccionada en el NoteProvider
+                          context
+                              .read<NoteProvider>()
+                              .addNoteToSelectedCategory(note);
+                        }
+                        // Limpia los campos de texto
                         _titleEditingController.clear();
                         _contetsEditingController.clear();
-
-                        context.pop();
+                        // Regresa a la pantalla anterior
+                        Navigator.of(context).pop();
                       },
                       borderRadius: BorderRadius.circular(10),
                       child: Icon(
@@ -127,48 +135,6 @@ class _MyCustomAppBar extends StatelessWidget {
                         size: 24,
                         color: Colors.black.withOpacity(0.5),
                       ),
-                    ),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 0),
-                child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: Card(
-                    elevation: 0,
-                    color: const Color(0xFFD9D9D9).withOpacity(0.5),
-                    child: InkWell(
-                      onTap: () {
-                        // TODO: Change color
-                      },
-                      borderRadius: BorderRadius.circular(10),
-                      child: Icon(
-                        Icons.light_mode_outlined,
-                        size: 24,
-                        color: Colors.black.withOpacity(.5),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                width: 50,
-                height: 50,
-                child: Card(
-                  elevation: 0,
-                  color: const Color(0xFFD9D9D9).withOpacity(0.5),
-                  child: InkWell(
-                    onTap: () {
-                      // TODO: delete
-                    },
-                    borderRadius: BorderRadius.circular(10),
-                    child: Icon(
-                      Icons.delete_outline,
-                      size: 24,
-                      color: Colors.black.withOpacity(.5),
                     ),
                   ),
                 ),

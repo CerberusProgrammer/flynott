@@ -7,7 +7,7 @@ import 'package:flynott/infrastructure/models/note.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
-import '../../providers/notes_provider.dart';
+import '../../providers/note_provider.dart';
 
 class CategoryNotesScreen extends StatelessWidget {
   const CategoryNotesScreen({super.key});
@@ -16,9 +16,13 @@ class CategoryNotesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final indexCategory = context.watch<NotesProvider>().indexCategory;
-    final notes = context.watch<NotesProvider>().categories;
-    final categoryNote = notes[indexCategory];
+    // Obtiene la categoría seleccionada del NotesProvider
+    final categoryNote = context.watch<NoteProvider>().selectedCategory;
+
+    if (categoryNote == null) {
+      // Si no hay ninguna categoría seleccionada, muestra un mensaje o un widget vacío
+      return const Center(child: Text('No hay ninguna categoría seleccionada'));
+    }
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -184,7 +188,9 @@ class _CardNote extends StatelessWidget {
         color: category.color,
         child: InkWell(
           onTap: () {
-            context.read<NotesProvider>().indexNote = index;
+            // Selecciona la nota en el NotesProvider
+            context.read<NoteProvider>().selectNote(note);
+            // Navega a la pantalla de visualización de la nota
             context.pushNamed(DisplayNoteScreen.appRouterName);
           },
           borderRadius: BorderRadius.circular(10),

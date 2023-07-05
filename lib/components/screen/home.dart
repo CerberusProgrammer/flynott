@@ -1,13 +1,14 @@
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flynott/components/components.dart';
-import 'package:flynott/components/providers/notes_provider.dart';
 import 'package:flynott/components/providers/times_provider.dart';
 import 'package:flynott/components/widgets/shared/custom_appbar.dart';
 import 'package:flynott/infrastructure/models/category_note.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+
+import '../providers/note_provider.dart';
 
 class Home extends StatelessWidget {
   const Home({super.key});
@@ -16,7 +17,8 @@ class Home extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final notes = context.watch<NotesProvider>().categories;
+    // Obtiene la lista de categorías del NotesProvider
+    final notes = context.watch<NoteProvider>().categories;
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -77,7 +79,9 @@ class _CardCategoryNote extends StatelessWidget {
         color: categoryNote.color,
         child: InkWell(
           onTap: () {
-            context.read<NotesProvider>().indexCategory = index;
+            // Selecciona la categoría en el NotesProvider
+            context.read<NoteProvider>().selectCategory(categoryNote);
+            // Navega a la pantalla de notas de la categoría
             context.pushNamed(CategoryNotesScreen.appRouterName);
           },
           borderRadius: BorderRadius.circular(10),

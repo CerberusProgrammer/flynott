@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flynott/components/providers/notes_provider.dart';
 import 'package:flynott/components/providers/times_provider.dart';
 import 'package:flynott/config/router/app_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -18,13 +17,6 @@ class Main extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-            lazy: false,
-            create: (_) {
-              final notes = NotesProvider();
-              notes.loadTestData();
-              return notes;
-            }),
         ChangeNotifierProvider(
             lazy: false,
             create: (_) {

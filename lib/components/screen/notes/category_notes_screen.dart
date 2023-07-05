@@ -1,3 +1,4 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:flynott/components/components.dart';
@@ -85,62 +86,27 @@ class CategoryNotesScreen extends StatelessWidget {
   }
 }
 
-class _MyCustomAppBar extends StatelessWidget {
+class _MyCustomAppBar extends StatefulWidget {
+  @override
+  _MyCustomAppBarState createState() => _MyCustomAppBarState();
+}
+
+class _MyCustomAppBarState extends State<_MyCustomAppBar> {
+  bool _showExtraWidgets = false;
+  bool _showTextField = false;
+  final TextEditingController _textController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: SizedBox(
+        width: double.infinity,
         height: 74,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(23, 16, 23, 0),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 23, 0),
-                child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: Card(
-                    elevation: 0,
-                    color: const Color(0xFFD9D9D9).withOpacity(0.5),
-                    child: InkWell(
-                      onTap: () {
-                        context.pop();
-                      },
-                      borderRadius: BorderRadius.circular(10),
-                      child: Icon(
-                        Icons.arrow_back_ios_new,
-                        size: 24,
-                        color: Colors.black.withOpacity(0.5),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(0, 0, 8, 0),
-                child: SizedBox(
-                  width: 50,
-                  height: 50,
-                  child: Card(
-                    elevation: 0,
-                    color: const Color(0xFFD9D9D9).withOpacity(0.5),
-                    child: InkWell(
-                      onTap: () {
-                        // TODO: Filter
-                      },
-                      borderRadius: BorderRadius.circular(10),
-                      child: Icon(
-                        Icons.filter_alt_rounded,
-                        size: 24,
-                        color: Colors.black.withOpacity(.5),
-                      ),
-                    ),
-                  ),
-                ),
-              ),
               SizedBox(
                 width: 50,
                 height: 50,
@@ -149,16 +115,116 @@ class _MyCustomAppBar extends StatelessWidget {
                   color: const Color(0xFFD9D9D9).withOpacity(0.5),
                   child: InkWell(
                     onTap: () {
-                      // TODO: search
+                      context.pop();
                     },
                     borderRadius: BorderRadius.circular(10),
                     child: Icon(
-                      Icons.search,
+                      Icons.arrow_back_ios_new,
                       size: 24,
-                      color: Colors.black.withOpacity(.5),
+                      color: Colors.black.withOpacity(0.5),
                     ),
                   ),
                 ),
+              ),
+              if (_showTextField)
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(8, 0, 8, 0),
+                    child: FadeIn(
+                      child: Theme(
+                        data: Theme.of(context).copyWith(
+                          textSelectionTheme: TextSelectionThemeData(
+                            selectionColor: Colors.black.withOpacity(.1),
+                          ),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10),
+                          child: TextField(
+                            autofocus: true,
+                            controller: _textController,
+                            decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.black.withOpacity(0.1),
+                              border: InputBorder.none,
+                            ),
+                            cursorColor: Colors.black,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                )
+              else
+                const Spacer(),
+              if (_showExtraWidgets) ...[
+                FadeIn(
+                  child: SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: Card(
+                      elevation: 0,
+                      color: const Color(0xFFD9D9D9).withOpacity(0.5),
+                      child: InkWell(
+                          onTap: () {
+                            Provider.of<NoteProvider>(context, listen: false)
+                                .filterNotes(NoteFilter.dateAscending);
+                          },
+                          borderRadius: BorderRadius.circular(10),
+                          child: Icon(Icons.arrow_upward,
+                              size: 24, color: Colors.black.withOpacity(.5))),
+                    ),
+                  ),
+                ),
+                FadeIn(
+                  child: SizedBox(
+                    width: 50,
+                    height: 50,
+                    child: Card(
+                        elevation: 0,
+                        color: const Color(0xFFD9D9D9).withOpacity(0.5),
+                        child: InkWell(
+                            onTap: () {
+                              Provider.of<NoteProvider>(context, listen: false)
+                                  .filterNotes(NoteFilter.dateDescending);
+                            },
+                            borderRadius: BorderRadius.circular(10),
+                            child: Icon(Icons.arrow_downward,
+                                size: 24,
+                                color: Colors.black.withOpacity(.5)))),
+                  ),
+                ),
+              ],
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Card(
+                    elevation: 0,
+                    color: const Color(0xFFD9D9D9).withOpacity(0.5),
+                    child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _showExtraWidgets = !_showExtraWidgets;
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Icon(Icons.filter_alt_outlined,
+                            size: 24, color: Colors.black.withOpacity(.5)))),
+              ),
+              SizedBox(
+                width: 50,
+                height: 50,
+                child: Card(
+                    elevation: 0,
+                    color: const Color(0xFFD9D9D9).withOpacity(0.5),
+                    child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            _showTextField = !_showTextField;
+                          });
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Icon(Icons.search,
+                            size: 24, color: Colors.black.withOpacity(.5)))),
               ),
             ],
           ),

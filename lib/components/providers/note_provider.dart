@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 import '../../infrastructure/models/category_note.dart';
 import '../../infrastructure/models/note.dart';
 
+enum NoteFilter { dateAscending, dateDescending }
+
 class NoteProvider extends ChangeNotifier {
   // Lista de categorías
   final List<CategoryNote> _categories;
@@ -135,7 +137,8 @@ class NoteProvider extends ChangeNotifier {
   void addNoteToSelectedCategory(Note note) {
     if (_selectedCategory != null) {
       // Añade la nota a la lista de notas de la categoría seleccionada
-      _selectedCategory!.notes.add(note);
+      _selectedCategory!.notes.insert(0, note);
+      _selectedCategory!.quantityNotes++;
       // Notifica a los widgets que estén escuchando los cambios
       notifyListeners();
     }
@@ -184,6 +187,29 @@ class NoteProvider extends ChangeNotifier {
         }
         notifyListeners();
       }
+    }
+  }
+
+  void filterNotes(NoteFilter filter) {
+    if (_selectedCategory != null) {
+      final dateFormat = DateFormat('dd MMM yyyy');
+      switch (filter) {
+        case NoteFilter.dateAscending:
+          _selectedCategory!.notes.sort((a, b) {
+            final dateA = dateFormat.parse(a.date);
+            final dateB = dateFormat.parse(b.date);
+            return dateA.compareTo(dateB);
+          });
+          break;
+        case NoteFilter.dateDescending:
+          _selectedCategory!.notes.sort((a, b) {
+            final dateA = dateFormat.parse(a.date);
+            final dateB = dateFormat.parse(b.date);
+            return dateB.compareTo(dateA);
+          });
+          break;
+      }
+      notifyListeners();
     }
   }
 }

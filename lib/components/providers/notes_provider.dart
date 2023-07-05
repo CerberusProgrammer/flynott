@@ -59,6 +59,20 @@ class NotesProvider extends ChangeNotifier {
     );
   }
 
+  void sortDataUp() {
+    final dateFormat = DateFormat('dd MMM yyyy');
+    categories.sort(
+        (a, b) => dateFormat.parse(b.date).compareTo(dateFormat.parse(a.date)));
+    notifyListeners();
+  }
+
+  void sortDataDown() {
+    final dateFormat = DateFormat('dd MMM yyyy');
+    categories.sort(
+        (a, b) => dateFormat.parse(a.date).compareTo(dateFormat.parse(b.date)));
+    notifyListeners();
+  }
+
   Color getColorCategory() {
     return categories[indexCategory].color;
   }

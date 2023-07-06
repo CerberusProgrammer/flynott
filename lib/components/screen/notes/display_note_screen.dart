@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flynott/components/components.dart';
 import 'package:flynott/components/providers/times_provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -154,7 +155,8 @@ class _MyCustomAppBar extends StatelessWidget {
                       color: const Color(0xFFD9D9D9).withOpacity(0.5),
                       child: InkWell(
                         onTap: () {
-                          context.pop();
+                          context
+                              .replaceNamed(CategoryNotesScreen.appRouterName);
                         },
                         borderRadius: BorderRadius.circular(10),
                         child: Icon(

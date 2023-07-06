@@ -24,6 +24,7 @@ class Home extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // TODO: settings page
             CustomAppbar(
               title: context.watch<TimesProvider>().getGreetings(),
               date: context.watch<TimesProvider>().actualTime,
@@ -51,7 +52,9 @@ class Home extends StatelessWidget {
         elevation: 0,
         backgroundColor: const Color(0xFFD9D9D9),
         splashColor: const Color.fromARGB(146, 255, 255, 255),
-        onPressed: () {},
+        onPressed: () {
+          //TODO: pending to create the page for creator category
+        },
         child: const Icon(
           Icons.add,
           color: Colors.black,

@@ -285,7 +285,7 @@ class _CardNote extends StatelessWidget {
             // Selecciona la nota en el NotesProvider
             context.read<NoteProvider>().selectNote(note);
             // Navega a la pantalla de visualización de la nota
-            context.pushNamed(DisplayNoteScreen.appRouterName);
+            context.replaceNamed(DisplayNoteScreen.appRouterName);
           },
           borderRadius: BorderRadius.circular(10),
           child: Column(
